@@ -8,8 +8,6 @@ import com.andersen.studentnamegenerator.repository.StudentsRepository;
 import com.andersen.studentnamegenerator.service.StudentsAdministrationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-
-import java.io.FileNotFoundException;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -22,32 +20,32 @@ public class StudentsAdministrationServiceImpl implements StudentsAdministration
 
     @Override
     public StudentsResponseDto getStudentById(Long id) {
-        return studentsMapper.toDto(studentsRepository.findById(id));
+        return studentsMapper.toDto(studentsRepository.getById(id));
     }
 
     @Override
     public List<StudentsResponseDto> getAllStudents() {
         List<Students> studentsList = studentsRepository.findAll();
-        return studentsList.stream().map(studentsMapper::listToDto).collect(Collectors.toList());
+        return studentsList.stream().map(studentsMapper::toDto).collect(Collectors.toList());
     }
 
     @Override
     public StudentsResponseDto deleteStudent(Long id) {
         Students student = studentsRepository.findById(id).orElseThrow(NullPointerException::new);
         studentsRepository.delete(student);
-        return studentsMapper.toDto(Optional.of(student));
+        return studentsMapper.toDto(student);
     }
 
     @Override
     public StudentsResponseDto createStudent(StudentsRequestDto studentsRequestDto) {
         Students student = studentsMapper.toEntity(studentsRequestDto);
-        return studentsMapper.toDto(Optional.of(studentsRepository.save(student)));
+        return studentsMapper.toDto(studentsRepository.save(student));
     }
 
     @Override
     public StudentsResponseDto updateStudent(Long id, StudentsRequestDto studentsRequestDto) {
         Students student = studentsRepository.findById(id).orElseThrow(NullPointerException::new);
         studentsMapper.update(studentsMapper.toEntity(studentsRequestDto), student);
-        return studentsMapper.toDto(Optional.of(studentsRepository.save(student)));
+        return studentsMapper.toDto(studentsRepository.save(student));
     }
 }

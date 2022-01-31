@@ -2,9 +2,8 @@ package com.andersen.studentnamegenerator.controller;
 
 import com.andersen.studentnamegenerator.dto.StudentsRequestDto;
 import com.andersen.studentnamegenerator.dto.StudentsResponseDto;
-import com.andersen.studentnamegenerator.mapper.StudentsMapper;
-import com.andersen.studentnamegenerator.repository.StudentsRepository;
 import com.andersen.studentnamegenerator.service.StudentsAdministrationService;
+import io.swagger.annotations.Api;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
@@ -12,7 +11,8 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping(value = "/student")
+@RequestMapping( "/student")
+@Api(description = "System management")
 public class StudentsAdministrationController {
     private final StudentsAdministrationService studentsAdministrationService;
 
