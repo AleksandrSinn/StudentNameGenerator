@@ -7,5 +7,6 @@ public interface StudentsGeneratorService {
     StudentsResponseDto getRandomStudent();
     List<StudentsResponseDto> getRandomPairOfAllStudents();
     List<StudentsResponseDto> getRandomPairOfAllCaptains();
-    StudentsResponseDto addRatingById(Long id, double point);
+    StudentsResponseDto addRatingById(Long id, Double point);
+    void restartStudentsGenerator();
 }

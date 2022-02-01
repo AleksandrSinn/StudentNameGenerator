@@ -16,11 +16,11 @@ public class Students {
     private Long id;
     @Column(name = "group_id")
     private int groupId;
-    private String firstName;
-    private String lastName;
+    private String firstname;
+    private String lastname;
     @Enumerated(EnumType.STRING)
     private RoleInCompany role;
-    private double rating;
+    private Double rating;
 
 
     public enum RoleInCompany{

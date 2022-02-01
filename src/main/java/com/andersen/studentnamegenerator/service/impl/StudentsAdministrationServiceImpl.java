@@ -9,7 +9,6 @@ import com.andersen.studentnamegenerator.service.StudentsAdministrationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -31,7 +30,7 @@ public class StudentsAdministrationServiceImpl implements StudentsAdministration
 
     @Override
     public StudentsResponseDto deleteStudent(Long id) {
-        Students student = studentsRepository.findById(id).orElseThrow(NullPointerException::new);
+        Students student = studentsRepository.getById(id);
         studentsRepository.delete(student);
         return studentsMapper.toDto(student);
     }
@@ -44,7 +43,7 @@ public class StudentsAdministrationServiceImpl implements StudentsAdministration
 
     @Override
     public StudentsResponseDto updateStudent(Long id, StudentsRequestDto studentsRequestDto) {
-        Students student = studentsRepository.findById(id).orElseThrow(NullPointerException::new);
+        Students student = studentsRepository.getById(id);
         studentsMapper.update(studentsMapper.toEntity(studentsRequestDto), student);
         return studentsMapper.toDto(studentsRepository.save(student));
     }

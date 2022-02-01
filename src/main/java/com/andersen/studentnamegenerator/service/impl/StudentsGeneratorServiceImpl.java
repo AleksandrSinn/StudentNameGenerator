@@ -37,9 +37,14 @@ public class StudentsGeneratorServiceImpl implements StudentsGeneratorService {
     }
 
     @Override
-    public StudentsResponseDto addRatingById(Long id, double point) {
-        Students students = studentsRepository.findById(id).orElseThrow(NullPointerException::new);
+    public StudentsResponseDto addRatingById(Long id, Double point) {
+        Students students = studentsRepository.getById(id);
         students.setRating(point);
-        return studentsMapper.toDto(students);
+        return studentsMapper.toDto(studentsRepository.save(students));
+    }
+
+    @Override
+    public void restartStudentsGenerator() {
+        generatorComponent.restartMethod();
     }
 }

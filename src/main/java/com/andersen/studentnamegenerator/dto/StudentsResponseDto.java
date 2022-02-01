@@ -8,8 +8,8 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 public class StudentsResponseDto {
-    private int groupId;
-    private String firstName;
-    private String lastName;
+    private Long id;
+    private String firstname;
+    private String lastname;
     private Students.RoleInCompany role;
 }

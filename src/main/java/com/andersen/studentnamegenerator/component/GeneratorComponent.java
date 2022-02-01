@@ -6,9 +6,8 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import org.springframework.stereotype.Component;
-
+import javax.annotation.PostConstruct;
 import java.util.*;
-import java.util.stream.Collectors;
 
 
 @RequiredArgsConstructor
@@ -17,32 +16,52 @@ import java.util.stream.Collectors;
 @Component
 public class GeneratorComponent {
     private final StudentsRepository studentsRepository;
+    private static Students firstAskedStudent;
     private static Students lastAskedStudent;
+    private static Students firstAskedCaptain;
     private static Students lastAskedCaptain;
     private static List<Students> randomStudents;
-    private static List<Students> pairOfStudents;
     private static List<Students> randomCaptains;
+    private static List<Students> pairOfStudents;
     private static List<Students> pairOfCaptains;
-    private static List<Students> studentsList;
 
+    @PostConstruct
     public synchronized void beforeMethods(){
-        studentsList = studentsRepository.findAll();
-        randomStudents = new ArrayList<>(studentsList);
+        randomStudents = studentsRepository.findAll();
+        if(randomStudents.isEmpty()){
+            finishOperations();
+        }
+        randomCaptains = studentsRepository.findAllByRole(Students.RoleInCompany.CAPTAIN);
+        if(randomCaptains.isEmpty()){
+            finishOperations();
+        }
         Collections.shuffle(randomStudents);
+        Collections.shuffle(randomCaptains);
         pairOfStudents = new ArrayList<>();
+        pairOfCaptains = new ArrayList<>();
     }
 
     public synchronized Students getRandomStudent(){
-        beforeMethods();
         return randomStudents.remove(randomStudents.size() - 1);
     }
 
+    public synchronized Students getRandomCaptain(){
+        return randomCaptains.remove(randomCaptains.size() - 1);
+    }
+
     public List<Students> getPairOfRandomStudent(){
-        beforeMethods();
+        if(randomStudents.isEmpty()){
+            finishOperations();
+        }
         if(pairOfStudents.isEmpty()){
-            pairOfStudents.add(getRandomStudent());
+            firstAskedStudent = getRandomStudent();
             lastAskedStudent = getRandomStudent();
+            pairOfStudents.add(firstAskedStudent);
             pairOfStudents.add(lastAskedStudent);
+            return pairOfStudents;
+        }
+        if(pairOfStudents.size() == 1){
+            pairOfStudents.add(firstAskedStudent);
             return pairOfStudents;
         }
         pairOfStudents.remove(0);
@@ -52,21 +71,40 @@ public class GeneratorComponent {
     }
 
     public List<Students> getPairOfRandomCaptain(){
-        randomCaptains = studentsList.stream()
-                .filter(student -> student.getRole() == Students.RoleInCompany.CAPTAIN)
-                .collect(Collectors.toList());
+        if(randomCaptains.isEmpty()){
+            finishOperations();
+        }
         if(pairOfCaptains.isEmpty()){
-            pairOfCaptains.add(randomCaptains.remove(randomCaptains.size() - 1));
-            lastAskedCaptain = randomCaptains.remove(randomCaptains.size() - 1);
+            firstAskedCaptain = getRandomCaptain();
+            lastAskedCaptain = getRandomCaptain();
+            pairOfCaptains.add(firstAskedCaptain);
             pairOfCaptains.add(lastAskedCaptain);
             return pairOfCaptains;
         }
+        if(pairOfCaptains.size() == 1){
+            pairOfCaptains.add(firstAskedCaptain);
+            return pairOfCaptains;
+        }
         pairOfCaptains.remove(0);
-        lastAskedCaptain = pairOfCaptains.remove(pairOfCaptains.size() - 1);
+        lastAskedCaptain = getRandomCaptain();
         pairOfCaptains.add(lastAskedCaptain);
         return pairOfCaptains;
     }
 
+    public void restartMethod(){
+        firstAskedStudent = null;
+        lastAskedStudent = null;
+        firstAskedCaptain = null;
+        lastAskedCaptain = null;
+        randomStudents = null;
+        randomCaptains = null;
+        pairOfStudents = null;
+        pairOfCaptains = null;
 
+        this.beforeMethods();
+    }
 
+    public void finishOperations(){
+        System.out.println("Your array of students is Empty.");
+    }
 }

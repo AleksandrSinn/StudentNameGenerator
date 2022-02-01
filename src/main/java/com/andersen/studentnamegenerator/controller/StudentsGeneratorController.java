@@ -30,7 +30,12 @@ public class StudentsGeneratorController {
 
     @GetMapping("/addRating/{id}/{point}")
     public StudentsResponseDto addPointById(@PathVariable Long id,
-            @PathVariable double point){
+            @PathVariable Double point){
         return studentsGeneratorService.addRatingById(id, point);
+    }
+
+    @GetMapping("/restart")
+    public void restartStudentsGenerator(){
+        studentsGeneratorService.restartStudentsGenerator();
     }
 }
